@@ -1,0 +1,20 @@
+{
+  "name": "mfp-analyser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "express": "^4.15.3",
+    "graceful-fs": "^4.1.11",
+    "limiter": "^1.1.0",
+    "nightmare": "^2.10.0",
+    "read-dir-stream": "^0.4.0",
+    "request": "^2.81.0"
+  }
+}
