@@ -66,11 +66,12 @@ analyse(417188839, (food) => {
 const express = require('express')
 const app = express()
 
-app.get('/:id', function (req, res) {
+app.get('/enum/:id', function (req, res) {
     analyse(req.params.id, (food) => {
         console.log(food)
-        fs.writeFile("foods/" + food["Food ID"] + "." + food["Weight ID"] + ".json", JSON.stringify(food), (err) => (console.log(err ? err : food.Name + " OK"), res.send("OK")));
+        fs.writeFile("foods/" + food["Food ID"] + "." + food["Weight ID"] + ".json", JSON.stringify(food), (err) => (console.log(err ? err : food.Name + " OK")));
     })
+    res.send("OK")
 })
 
 app.listen(3000, function () {
