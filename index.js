@@ -63,10 +63,10 @@ analyse(417188839, (food) => {
 })
 //getData(, 261680669)
 
-fs.readdir("../enum", (err, file) => {
-    if (err) console.log(err)
-    analyse(file, (food) => {
+fs.readdir("../enum", (err, files) => {
+    files.forEach((file) => analyse(file, (food) => {
         console.log(food)
         fs.writeFile("foods/" + food["Food ID"] + "." + food["Weight ID"] + ".json", JSON.stringify(food), (err) => (console.log(err ? err : food.Name + " OK")));
-    })
+    }))
+
 })
