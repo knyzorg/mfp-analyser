@@ -31,6 +31,11 @@ function getData(id, wid, cb) {
 
 function analyse(id, resume,cb) {
     request(`http://www.myfitnesspal.com/food/calories/tostitos-bite-size-corn-chips-${id}`, function (error, response, body) {
+        if (error){
+            console.log(error)
+            resume()
+            return;
+        }
         var $ = cheerio.load(body);
         var lenn = ($(".select option").length)
         $(".select option").each(function (index, elem) {
