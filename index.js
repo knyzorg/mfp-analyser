@@ -67,10 +67,10 @@ function analyse(id, resume,cb) {
     })
 })*/
 
-analyse(1000002, ()=>{}, (food)=>console.log(food));
+//analyse(1000002, ()=>{}, (food)=>console.log(food));
 
 
-/*var lineNr = 0;
+var lineNr = 0;
 
 var s = fs.createReadStream('../enum/items.txt')
     .pipe(es.split())
