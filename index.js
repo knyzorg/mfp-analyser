@@ -91,12 +91,13 @@ con.connect(function (err) {
 
 
     var lineNr = 0;
-    var startAt = 0;
+    var startAt = fs.readFileSync("start");
     var s = fs.createReadStream('../enum/items.txt')
         .pipe(es.split())
         .pipe(es.mapSync(function (line) {
             lineNr += 1;
             if (lineNr < startAt) return;
+            fs.writeFile("start", lineNr, ()=>{})
             // pause the readstream
             s.pause();
 
