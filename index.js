@@ -107,7 +107,6 @@ con.connect(function (err) {
 
                 var sql = "INSERT INTO nutrition SET ?";
                 con.query(sql, food, function (err, result) {
-                    if (err) throw err;
                     console.log("1 record inserted");
                 });
 
