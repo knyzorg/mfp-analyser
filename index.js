@@ -77,7 +77,7 @@ var s = fs.createReadStream('../enum/items.txt')
         s.pause();
 
         lineNr += 1;
-
+        console.log(line)
         analyse(line, s.resume, (food) => {
             console.log(food)
             fs.writeFile("foods/" + food["Food ID"] + "." + food["Weight ID"] + ".json", JSON.stringify(food), (err) => console.log(err ? err : food.Name + " OK"));
