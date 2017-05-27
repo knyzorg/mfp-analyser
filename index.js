@@ -63,7 +63,7 @@ analyse(417188839, (food) => {
 })
 //getData(, 261680669)
 
-readfiles('../enum', {
+require("readfiles")('../enum', {
     depth: 0
 }, function (err, content, filename) {
     analyse(filename, (food) => {
