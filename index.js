@@ -1,6 +1,9 @@
 var request = require('request');
 const cheerio = require('cheerio')
-const fs = require('fs')
+var fs = require('fs')
+    , util = require('util')
+    , stream = require('stream')
+    , es = require('event-stream');
 
 
 function getData(id, wid, cb) {
@@ -22,11 +25,11 @@ function getData(id, wid, cb) {
     })
 }
 
-function analyse(id, cb) {
+function analyse(id, resume,cb) {
     request(`http://www.myfitnesspal.com/food/calories/tostitos-bite-size-corn-chips-${id}`, function (error, response, body) {
         var $ = cheerio.load(body);
         console.log($(".select option").length)
-        $(".select option").each(function (index, elem) {
+        $(".select option").each(function (index, elem, arr) {
             var wid = $(this).text()
             var portion = $(this).val();
             request(`http://www.myfitnesspal.com/food/calories/${id}`, function (error, response, body) {
@@ -39,6 +42,10 @@ function analyse(id, cb) {
                     food["Portion"] = wid;
                     food["Food ID"] = $($("link[rel=alternate]")[27]).attr("href").substr($($("link[rel=alternate]")[27]).attr("href").indexOf("?") + 4, $($("link[rel=alternate]")[27]).attr("href").indexOf("&") - ($($("link[rel=alternate]")[27]).attr("href").indexOf("?") + 4));
                     cb(food)
+
+                    if (index == arr.length-1){
+                        resume()
+                    }
                 })
 
             })
@@ -57,23 +64,49 @@ var limiter = new RateLimiter(1, 500)
         });
     })
 })*/
-analyse(417188839, (food) => {
-    console.log(food)
-    fs.writeFile("foods/" + food["Food ID"] + "." + food["Weight ID"] + ".json", JSON.stringify(food), (err) => console.log(err ? err : food.Name + " OK"));
-})
-//getData(, 261680669)
 
-require("node-readdir")('../enum', {
+
+
+var lineNr = 0;
+
+var s = fs.createReadStream('../enum/items.txt')
+    .pipe(es.split())
+    .pipe(es.mapSync(function (line) {
+
+        // pause the readstream
+        s.pause();
+
+        lineNr += 1;
+
+        analyse(line, s.resume, (food) => {
+            console.log(food)
+            fs.writeFile("foods/" + food["Food ID"] + "." + food["Weight ID"] + ".json", JSON.stringify(food), (err) => console.log(err ? err : food.Name + " OK"));
+        })
+
+        // resume the readstream, possibly from a callback
+        //s.resume();
+    })
+        .on('error', function (err) {
+            console.log('Error while reading file.', err);
+        })
+        .on('end', function () {
+            console.log('Read entire file.')
+        })
+    );
+//getData(, 261680669)
+/*
+readfiles('../enum', {
     depth: 0
 }, function (err, content, filename) {
-    analyse(filename, (food) => {
-        console.log(food)
-        fs.writeFile("foods/" + food["Food ID"] + "." + food["Weight ID"] + ".json", JSON.stringify(food), (err) => (console.log(err ? err : food.Name + " OK")));
-    })
+    if (err) throw err;
+    console.log('File ' + filename + ':');
+    console.log(content);
 });
 
-/*fs.readdir("../enum", (err, files) => {
-    files.forEach((file) => 
+fs.readdir("../enum", (err, files) => {
+    files.forEach((file) => analyse(file, (food) => {
+        console.log(food)
+        fs.writeFile("foods/" + food["Food ID"] + "." + food["Weight ID"] + ".json", JSON.stringify(food), (err) => (console.log(err ? err : food.Name + " OK")));
+    }))
 
-})
-*/
+})*/
