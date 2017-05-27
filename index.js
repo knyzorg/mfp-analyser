@@ -76,15 +76,15 @@ function analyse(id, resume,cb) {
 
 
 var lineNr = 0;
-
+var startAt = 0;
 var s = fs.createReadStream('../enum/items.txt')
     .pipe(es.split())
     .pipe(es.mapSync(function (line) {
-
+        lineNr += 1;
+	if (lineNr < startAt) return;
         // pause the readstream
         s.pause();
 
-        lineNr += 1;
         console.log(line)
         analyse(line, s.resume, (food) => {
             console.log(food)
