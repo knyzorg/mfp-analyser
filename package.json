@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "cheerio": "^0.22.0",
+    "event-stream": "^3.3.4",
     "express": "^4.15.3",
     "graceful-fs": "^4.1.11",
     "limiter": "^1.1.0",

@@ -28,8 +28,8 @@ function getData(id, wid, cb) {
 function analyse(id, resume,cb) {
     request(`http://www.myfitnesspal.com/food/calories/tostitos-bite-size-corn-chips-${id}`, function (error, response, body) {
         var $ = cheerio.load(body);
-        console.log($(".select option").length)
-        $(".select option").each(function (index, elem, arr) {
+        var lenn = ($(".select option").length)
+        $(".select option").each(function (index, elem) {
             var wid = $(this).text()
             var portion = $(this).val();
             request(`http://www.myfitnesspal.com/food/calories/${id}`, function (error, response, body) {
@@ -43,7 +43,7 @@ function analyse(id, resume,cb) {
                     food["Food ID"] = $($("link[rel=alternate]")[27]).attr("href").substr($($("link[rel=alternate]")[27]).attr("href").indexOf("?") + 4, $($("link[rel=alternate]")[27]).attr("href").indexOf("&") - ($($("link[rel=alternate]")[27]).attr("href").indexOf("?") + 4));
                     cb(food)
 
-                    if (index == arr.length-1){
+                    if (index == lenn-1){
                         resume()
                     }
                 })
@@ -52,8 +52,6 @@ function analyse(id, resume,cb) {
         });
     });
 }
-var RateLimiter = require('limiter').RateLimiter;
-var limiter = new RateLimiter(1, 500)
 
 
 
@@ -65,6 +63,7 @@ var limiter = new RateLimiter(1, 500)
     })
 })*/
 
+analyse(1000002, ()=>{}, (food)=>console.log(food));
 
 
 var lineNr = 0;
