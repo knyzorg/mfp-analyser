@@ -8,6 +8,10 @@ var fs = require('fs')
 
 function getData(id, wid, cb) {
     request(`http://www.myfitnesspal.com/food/update_nutrition_facts_table/?id=${id}&quantity=1&weight_id=${wid}`, function (error, response, body) {
+        if (error){
+            console.log(error)
+            return;
+        }
         const $ = cheerio.load(body);
         var food = {}
         var datapts = ["Calories", "Total Fat"]
@@ -66,7 +70,7 @@ function analyse(id, resume,cb) {
 analyse(1000002, ()=>{}, (food)=>console.log(food));
 
 
-var lineNr = 0;
+/*var lineNr = 0;
 
 var s = fs.createReadStream('../enum/items.txt')
     .pipe(es.split())
