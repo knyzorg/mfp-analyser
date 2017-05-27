@@ -103,6 +103,7 @@ con.connect(function (err) {
             console.log(line)
             analyse(line, s.resume, (food) => {
                 console.log(food)
+                fs.unlink("../enum/" + line, ()=>{})
 
 
                 var sql = "INSERT INTO nutrition SET ?";
