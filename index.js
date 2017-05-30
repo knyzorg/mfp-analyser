@@ -89,6 +89,12 @@ con.connect(function (err) {
     if (err) throw err;
     console.log("Connected!");
 
+    //Keep connection open
+    setTimeout(()=>{
+	
+        con.query("select * from nutrition limit 1")
+    }, 5000)
+
 
     var lineNr = 0;
     var startAt = fs.readFileSync("start");
