@@ -81,32 +81,36 @@ var lines = fs.readFileSync("ids.txt").toString().split(/\r?\n/)
 
 console.log("Done reading file!")
 
+console.log("Assigning jobs to queue...")
+
+var calls = [];
+
+
+var tasks = lines.map((line) => (
+    (callback) => {
+        analyse(line, callback, (food) => {
+            var sql = "INSERT INTO nutrition SET ?";
+            con.query(sql, food, function (err, result) {
+                console.log(err ? err: "1 record inserted");
+            });
+
+        })
+    }
+));
+
+console.log("All done!")
+
 con.connect(function (err) {
     if (err) throw err;
     console.log("Connected!");
 
     //Keep connection open
     setTimeout(() => {
-
+        console.log("Ping server")
         con.query("select * from nutrition limit 1")
     }, 5000)
 
 
-
-    var calls = [];
-
-
-    var tasks = lines.map((line) => (
-        (callback) => {
-            analyse(line, callback, (food) => {
-                var sql = "INSERT INTO nutrition SET ?";
-                con.query(sql, food, function (err, result) {
-                    console.log("1 record inserted");
-                });
-
-            })
-        }
-    ));
 
 
     require("async.parallellimit")(tasks, 50, function () {
