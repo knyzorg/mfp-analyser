@@ -81,7 +81,7 @@ var lines = fs.readFileSync("ids.txt").toString().split(/\r?\n/)
 
 console.log("Done reading file!")
 
-console.log("Assigning jobs to queue...")
+console.log("Assigning jobs to queue... (This will taking a fucking long while)")
 
 var calls = [];
 
@@ -89,6 +89,7 @@ var calls = [];
 var tasks = lines.map((line) => (
     (callback) => {
         analyse(line, callback, (food) => {
+            console.log("Processing", line)
             var sql = "INSERT INTO nutrition SET ?";
             con.query(sql, food, function (err, result) {
                 console.log(err ? err: "1 record inserted");
