@@ -29,11 +29,12 @@ function getData(id, wid, cb) {
     })
 }
 
-function analyse(id, resume, cb) {
+function analyse(id, finished, cb) {
     request(`http://www.myfitnesspal.com/food/calories/tostitos-bite-size-corn-chips-${id}`, function (error, response, body) {
         if (error) {
             console.log(error)
-            resume()
+            console.log("Failed ID", id)
+            finished()
             return;
         }
         var $ = cheerio.load(body);
@@ -55,7 +56,7 @@ function analyse(id, resume, cb) {
                     cb(food)
 
                     if (index == lenn - 1) {
-                        resume()
+                        finished()
                     }
                 })
 
@@ -64,17 +65,6 @@ function analyse(id, resume, cb) {
     });
 }
 
-
-
-/*fs.readdir("enum", (err, files) => {
-    files.forEach((id) => {
-        limiter.removeTokens(1, () => {
-            analyse(id)
-        });
-    })
-})*/
-
-//analyse(1000002, ()=>{}, (food)=>console.log(food));
 
 var mysql = require('mysql');
 
@@ -90,47 +80,32 @@ con.connect(function (err) {
     console.log("Connected!");
 
     //Keep connection open
-    setTimeout(()=>{
-	
+    setTimeout(() => {
+
         con.query("select * from nutrition limit 1")
     }, 5000)
 
 
-    var lineNr = 0;
-    var startAt = fs.readFileSync("start");
-    var s = fs.createReadStream('../enum/items.txt')
-        .pipe(es.split())
-        .pipe(es.mapSync(function (line) {
-            lineNr += 1;
-            if (lineNr < startAt) return;
-            fs.writeFile("start", lineNr, ()=>{})
-            // pause the readstream
-            s.pause();
 
-            console.log(line)
-            analyse(line, s.resume, (food) => {
-                console.log(food)
-                fs.unlink("../enum/" + line, ()=>{})
+    var calls = [];
 
+    var lines = fs.readFileSync("ids.txt").toString().split(/\r?\n/)
 
+    var tasks = lines.map((line) => (
+        (callback) => {
+            analyse(line, callback, (food) => {
                 var sql = "INSERT INTO nutrition SET ?";
                 con.query(sql, food, function (err, result) {
                     console.log("1 record inserted");
                 });
 
-                //fs.writeFile("foods/" + food["Food ID"] + "." + food["Weight ID"] + ".json", JSON.stringify(food), (err) => console.log(err ? err : food.Name + " OK"));
             })
+        }
+    ));
 
-            // resume the readstream, possibly from a callback
-            //s.resume();
-        })
-            .on('error', function (err) {
-                console.log('Error while reading file.', err);
-            })
-            .on('end', function () {
-                console.log('Read entire file.')
-            })
-        );
+    
+    require("async.parallellimit")(tasks, 50, function () {
+    });
 
 
 });

@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async.parallellimit": "^0.5.2",
     "cheerio": "^0.22.0",
     "event-stream": "^3.3.4",
     "express": "^4.15.3",
