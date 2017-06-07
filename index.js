@@ -75,6 +75,12 @@ var con = mysql.createConnection({
     database: "scape"
 });
 
+console.log("Reading file.... (This may take a while)")
+
+var lines = fs.readFileSync("ids.txt").toString().split(/\r?\n/)
+
+console.log("Done reading file!")
+
 con.connect(function (err) {
     if (err) throw err;
     console.log("Connected!");
@@ -89,7 +95,6 @@ con.connect(function (err) {
 
     var calls = [];
 
-    var lines = fs.readFileSync("ids.txt").toString().split(/\r?\n/)
 
     var tasks = lines.map((line) => (
         (callback) => {
@@ -103,7 +108,7 @@ con.connect(function (err) {
         }
     ));
 
-    
+
     require("async.parallellimit")(tasks, 50, function () {
     });
 
