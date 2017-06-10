@@ -86,8 +86,8 @@ var tasks = lines.map((line) => (
             });*/
             var query = ('\
             INSERT IGNORE INTO `scape`.`nutrition` (`Calories`, `Total Fat`, `Sodium`, `Potassium`, `Saturated`, `Total Carbs`, `Polyunsaturated`, `Dietary Fiber`, `Monounsaturated`, `Sugars`, `Trans`, `Protein`, `Cholesterol`, `Vitamin A`, `Calcium`, `Vitamin C`, `Iron`, `Name`, `Weight ID`, `Food ID`, `Portion`, `Brand`) VALUES' +
-            `("${food["Calories"]}", "${food["Total Fat"]}", "${food["Sodium"]}", "${food["Potassium"]}", "${food["Saturated"]}", "${food["Total Carbs"]}", "${food["Polyunsaturated"]}", "${food["Dietary Fiber"]}", "${food["Monounsaturated"]}", "${food["Sugars"]}", "${food["Trans"]}", "${food["Protein"]}", "${food["Cholesterol"]}", "${food["Vitamin A"]}", "${food["Calcium"]}", "${food["Vitamin C"]}", "${food["Iron"]}", "${food["Name"]}", "${food["Weight ID"]}", "${food["Food ID"]}", "${food["Portion"]}", "${food["Brand"]}");`)
-            fs.appendFile("queries.txt",query);
+            `("${sqlesc(food["Calories"])}", "${sqlesc(food["Total Fat"])}", "${sqlesc(food["Sodium"])}", "${sqlesc(food["Potassium"])}", "${sqlesc(food["Saturated"])}", "${sqlesc(food["Total Carbs"])}", "${sqlesc(food["Polyunsaturated"])}", "${sqlesc(food["Dietary Fiber"])}", "${sqlesc(food["Monounsaturated"])}", "${sqlesc(food["Sugars"])}", "${sqlesc(food["Trans"])}", "${sqlesc(food["Protein"])}", "${sqlesc(food["Cholesterol"])}", "${sqlesc(food["Vitamin A"])}", "${sqlesc(food["Calcium"])}", "${sqlesc(food["Vitamin C"])}", "${sqlesc(food["Iron"])}", "${sqlesc(food["Name"])}", "${sqlesc(food["Weight ID"])}", "${sqlesc(food["Food ID"])}", "${sqlesc(food["Portion"])}", "${sqlesc(food["Brand"])}");`)
+            fs.appendFile("queries.txt",query, ()=>{});
         })
     }
 ));
@@ -98,3 +98,26 @@ console.log("All done!")
 
 
 
+function sqlesc(a) {
+    return a.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (a) {
+        switch (a) {
+            case "\0":
+                return "\\0";
+            case "\b":
+                return "\\b";
+            case "\t":
+                return "\\t";
+            case "":
+                return "\\z";
+            case "\n":
+                return "\\n";
+            case "\r":
+                return "\\r";
+            case '"':
+            case "'":
+            case "\\":
+            case "%":
+                return "\\" + a
+        }
+    })
+}
