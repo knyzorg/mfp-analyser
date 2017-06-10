@@ -65,16 +65,6 @@ function analyse(id, finished, cb) {
     });
 }
 
-
-var mysql = require('mysql');
-
-var con = mysql.createConnection({
-    host: "gymrut.com",
-    user: "slavadev",
-    password: "slavadev",
-    database: "scape"
-});
-
 console.log("Reading file.... (This may take a while)")
 
 var lines = fs.readFileSync("ids.txt").toString().split(/\r?\n/)
@@ -104,8 +94,6 @@ var tasks = lines.map((line) => (
 
 console.log("All done!")
 
-con.connect(function (err) {
-    if (err) throw err;
     console.log("Connected!");
 
     //Keep connection open
@@ -120,7 +108,5 @@ con.connect(function (err) {
     require("async.parallellimit")(tasks, 50, function () {
     });
 
-
-});
 
 
