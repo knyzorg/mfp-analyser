@@ -73,7 +73,7 @@ var used = fs.readFileSync("finished.txt").toString().split(/\r?\n/)
 
 console.log("Filtering data...")
 
-var list = lines.filter((line)=>(used.indexOf(line) !== -1))
+var list = lines.filter((line)=>(used.indexOf(line) === -1))
 
 console.log("Done reading file!")
 
