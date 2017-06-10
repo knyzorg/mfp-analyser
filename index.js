@@ -93,18 +93,6 @@ var tasks = lines.map((line) => (
 ));
 
 console.log("All done!")
-
-    console.log("Connected!");
-
-    //Keep connection open
-    setTimeout(() => {
-        console.log("Ping server")
-        con.query("select * from nutrition limit 1")
-    }, 5000)
-
-
-
-
     require("async.parallellimit")(tasks, 50, function () {
     });
 
