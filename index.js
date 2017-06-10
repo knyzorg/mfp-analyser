@@ -46,19 +46,19 @@ function analyse(id, finished, cb) {
             request(`http://www.myfitnesspal.com/food/calories/${id}`, function (error, response, body) {
                 getData(id, wid, (food) => {
 
+
+                    console.log("Running", id)
                     var $ = cheerio.load(body);
                     food["Name"] = $(".main-title").text().substr(13)
                     food["Weight ID"] = portion;
                     food["Portion"] = wid;
                     food["Brand"] = brand;
-                    if ($($("link[rel=alternate]")[27]).attr("href") == undefined){
-                        console.log("Failed", id)
-                    }
                     food["Food ID"] = $($("link[rel=alternate]")[27]).attr("href").substr($($("link[rel=alternate]")[27]).attr("href").indexOf("?") + 4, $($("link[rel=alternate]")[27]).attr("href").indexOf("&") - ($($("link[rel=alternate]")[27]).attr("href").indexOf("?") + 4));
                     cb(food)
 
                     if (index == lenn - 1) {
                         finished()
+                        fs.appendFile("finished.txt", "\r\n" + id, ()=>{})
                     }
                 })
 
@@ -67,9 +67,13 @@ function analyse(id, finished, cb) {
     });
 }
 
-console.log("Reading file.... (This may take a while)")
-
+console.log("Reading files.... (This may take a while)")
 var lines = fs.readFileSync("ids.txt").toString().split(/\r?\n/)
+var used = fs.readFileSync("finished.txt").toString().split(/\r?\n/)
+
+console.log("Filtering data...")
+
+var list = lines.filter((line)=>(used.indexOf(line) !== -1))
 
 console.log("Done reading file!")
 
@@ -86,7 +90,7 @@ setInterval(()=>{
 }, 5000)
 
 
-var tasks = lines.map((line) => (
+var tasks = list.map((line) => (
     (callback) => {
         analyse(line, callback, (food) => {
             //console.log("Processing", line)
