@@ -51,6 +51,9 @@ function analyse(id, finished, cb) {
                     food["Weight ID"] = portion;
                     food["Portion"] = wid;
                     food["Brand"] = brand;
+                    if ($($("link[rel=alternate]")[27]).attr("href") == undefined){
+                        console.log("Failed", id)
+                    }
                     food["Food ID"] = $($("link[rel=alternate]")[27]).attr("href").substr($($("link[rel=alternate]")[27]).attr("href").indexOf("?") + 4, $($("link[rel=alternate]")[27]).attr("href").indexOf("&") - ($($("link[rel=alternate]")[27]).attr("href").indexOf("?") + 4));
                     cb(food)
 
