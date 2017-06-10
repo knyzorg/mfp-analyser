@@ -91,10 +91,13 @@ var tasks = lines.map((line) => (
         analyse(line, callback, (food) => {
             console.log("Processing", line)
             var sql = "INSERT INTO nutrition SET ?";
-            con.query(sql, food, function (err, result) {
+            /*con.query(sql, food, function (err, result) {
                 console.log(err ? err: "1 record inserted");
-            });
-
+            });*/
+            var query = ('\
+            INSERT IGNORE INTO `scape`.`nutrition` (`Calories`, `Total Fat`, `Sodium`, `Potassium`, `Saturated`, `Total Carbs`, `Polyunsaturated`, `Dietary Fiber`, `Monounsaturated`, `Sugars`, `Trans`, `Protein`, `Cholesterol`, `Vitamin A`, `Calcium`, `Vitamin C`, `Iron`, `Name`, `Weight ID`, `Food ID`, `Portion`, `Brand`) VALUES' +
+            `("${food["Calories"]}", "${food["Total Fat"]}", "${food["Sodium"]}", "${food["Potassium"]}", "${food["Saturated"]}", "${food["Total Carbs"]}", "${food["Polyunsaturated"]}", "${food["Dietary Fiber"]}", "${food["Monounsaturated"]}", "${food["Sugars"]}", "${food["Trans"]}", "${food["Protein"]}", "${food["Cholesterol"]}", "${food["Vitamin A"]}", "${food["Calcium"]}", "${food["Vitamin C"]}", "${food["Iron"]}", "${food["Name"]}", "${food["Weight ID"]}", "${food["Food ID"]}", "${food["Portion"]}", "${food["Brand"]}");`)
+            fs.appendFile("queries.txt",query);
         })
     }
 ));
