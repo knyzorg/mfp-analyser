@@ -41,8 +41,8 @@ function analyse(id, finished, cb) {
         var brand = $(".col-1 .secondary-title").text().substr(10);
         var lenn = ($(".select option").length)
         $(".select option").each(function (index, elem) {
-            var wid = $(this).text()
-            var portion = $(this).val();
+            var portion = $(this).text()
+            var wid = $(this).val();
             request(`http://www.myfitnesspal.com/food/calories/${id}`, function (error, response, body) {
                 getData(id, wid, (food) => {
 
@@ -50,8 +50,8 @@ function analyse(id, finished, cb) {
                     console.log("Running", id)
                     var $ = cheerio.load(body);
                     food["Name"] = $(".main-title").text().substr(13)
-                    food["Weight ID"] = portion;
-                    food["Portion"] = wid;
+                    food["Weight ID"] = wid;
+                    food["Portion"] = portion;
                     food["Brand"] = brand;
                     food["Food ID"] = $($("link[rel=alternate]")[27]).attr("href").substr($($("link[rel=alternate]")[27]).attr("href").indexOf("?") + 4, $($("link[rel=alternate]")[27]).attr("href").indexOf("&") - ($($("link[rel=alternate]")[27]).attr("href").indexOf("?") + 4));
                     cb(food)
